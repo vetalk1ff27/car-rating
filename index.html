@@ -340,6 +340,7 @@ function App(){
   const [open,setOpen]=useState(null);
   const [sort,setSort]=useState("w");
   const [filt,setFilt]=useState("all");
+  const [showInfo,setShowInfo]=useState(false);
   const [theme,setTheme]=useState(()=>{try{return localStorage.getItem("carRatingTheme")||"dark"}catch(e){return "dark"}});
   const T=themes[theme];
   useEffect(()=>{Object.entries(T.vars).forEach(([k,v])=>document.documentElement.style.setProperty(k,v));try{localStorage.setItem("carRatingTheme",theme)}catch(e){}},[theme]);
@@ -368,31 +369,47 @@ function App(){
 
   return(
     <div style={{fontFamily:"var(--font-sans)",maxWidth:960,margin:"0 auto"}}>
-      <div style={{display:"flex",justifyContent:"flex-end",marginBottom:8}}>
-        <button onClick={(e)=>{e.stopPropagation();setTheme(theme==="dark"?"light":"dark")}} style={{padding:"6px 14px",fontSize:14,borderRadius:20,cursor:"pointer",background:"var(--color-background-secondary)",color:"var(--color-text-secondary)",border:"1px solid var(--color-border-secondary)",display:"flex",alignItems:"center",gap:6}}>{theme==="dark"?"☀️ Світла":"🌙 Темна"}</button>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <span style={{fontSize:16,fontWeight:600}}>Рейтинг авто</span>
+          <span style={{fontSize:13,color:"var(--color-text-tertiary)"}}>Польща / Європа</span>
+          <button onClick={(e)=>{e.stopPropagation();setShowInfo(!showInfo)}} style={{width:26,height:26,borderRadius:13,border:"1px solid var(--color-border-secondary)",background:showInfo?"var(--color-text-primary)":"transparent",color:showInfo?"var(--color-background-primary)":"var(--color-text-tertiary)",cursor:"pointer",fontSize:13,display:"flex",alignItems:"center",justifyContent:"center",padding:0,lineHeight:1}}>i</button>
+        </div>
+        <button onClick={(e)=>{e.stopPropagation();setTheme(theme==="dark"?"light":"dark")}} style={{padding:"5px 12px",fontSize:13,borderRadius:20,cursor:"pointer",background:"var(--color-background-secondary)",color:"var(--color-text-secondary)",border:"1px solid var(--color-border-secondary)",display:"flex",alignItems:"center",gap:5}}>{theme==="dark"?"\u2600\ufe0f Світла":"\u{1F319} Темна"}</button>
       </div>
-      <div style={{background:"var(--color-background-secondary)",borderRadius:8,padding:"10px 14px",marginBottom:10,fontSize:16,lineHeight:1.6}}>
-        <div style={{color:"var(--color-text-secondary)"}}><b>Ринок:</b> Польща / Європа &nbsp;|&nbsp; <b>Ваги:</b> Безпека 25% → Надійність 20% = Комфорт 20% → Ліквідність PL 18% → Кузов 10% → Задоволеність 7%</div>
-      </div>
+      {showInfo&&(
+        <div style={{background:"var(--color-background-secondary)",borderRadius:8,padding:"10px 14px",marginBottom:10,fontSize:14,lineHeight:1.7,color:"var(--color-text-secondary)"}}>
+          <div style={{fontWeight:500,marginBottom:4,color:"var(--color-text-primary)"}}>Ваги зведеного балу:</div>
+          <div style={{display:"flex",flexWrap:"wrap",gap:"4px 16px"}}>
+            <span>Безпека <b>25%</b></span>
+            <span>Надійність <b>20%</b></span>
+            <span>Комфорт/Тех <b>20%</b></span>
+            <span>Ліквідність PL <b>18%</b></span>
+            <span>Кузов <b>10%</b></span>
+            <span>Задоволеність <b>7%</b></span>
+          </div>
+        </div>
+      )}
 
-      <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:8}}>
+      <div style={{background:"var(--color-background-secondary)",borderRadius:8,padding:"8px 12px",marginBottom:8,display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+        <span style={{fontSize:13,fontWeight:500,color:"var(--color-text-tertiary)"}}>Фільтр:</span>
         {[{k:"all",l:"Усі"},{k:"gold",l:"Лідери"},{k:"silver",l:"Сильні"},{k:"bronze",l:"Середн."},{k:"low",l:"Аутсайд."}].map(f=>(
           <button key={f.k} onClick={()=>setFilt(f.k)} style={{
-            padding:"4px 10px",fontSize:15,borderRadius:14,cursor:"pointer",
+            padding:"4px 10px",fontSize:14,borderRadius:14,cursor:"pointer",
             background:filt===f.k?"var(--color-text-primary)":"transparent",
             color:filt===f.k?"var(--color-background-primary)":"var(--color-text-secondary)",
             border:`1px solid ${filt===f.k?"var(--color-text-primary)":"var(--color-border-secondary)"}`
           }}>{f.l} {f.k==="all"?data.length:tc[f.k]||0}</button>
         ))}
       </div>
-      <div style={{display:"flex",flexWrap:"wrap",gap:4,marginBottom:12}}>
-        <span style={{fontSize:14,color:"var(--color-text-tertiary)",lineHeight:"24px"}}>Сорт:</span>
+      <div style={{background:"var(--color-background-secondary)",borderRadius:8,padding:"8px 12px",marginBottom:12,display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
+        <span style={{fontSize:13,fontWeight:500,color:"var(--color-text-tertiary)"}}>Сортування:</span>
         {mets.map(m=>(
           <button key={m.k} onClick={()=>setSort(m.k)} style={{
-            padding:"3px 8px",fontSize:14,borderRadius:5,cursor:"pointer",
-            background:sort===m.k?"var(--color-background-secondary)":"transparent",
-            color:sort===m.k?m.c:"var(--color-text-tertiary)",fontWeight:sort===m.k?500:400,
-            border:`0.5px solid ${sort===m.k?"var(--color-border-secondary)":"transparent"}`
+            padding:"4px 9px",fontSize:13,borderRadius:6,cursor:"pointer",
+            background:sort===m.k?"var(--color-background-card)":"transparent",
+            color:sort===m.k?m.c:"var(--color-text-tertiary)",fontWeight:sort===m.k?600:400,
+            border:`1px solid ${sort===m.k?"var(--color-border-secondary)":"transparent"}`
           }}>{m.lb}</button>
         ))}
       </div>
@@ -456,10 +473,6 @@ function App(){
           );
         })}
       </div>
-      <p style={{fontSize:13,color:"var(--color-text-tertiary)",marginTop:14,lineHeight:1.5}}>
-        Адаптовано під Польщу: ліквідність = реєстрації SAMAR 2025 + мережа дилерів + попит на OTOMOTO. Buick прибрано (немає в Європі). Ford — лише європейська лінійка.
-        Джерела: CR 2026 | JD Power VDS 2026 & IQS 2025 | KBB & CarEdge 2026 | Euro NCAP 2024–2025 | IIHS 2025 | What Car? UK 2025 | SAMAR.pl 2025 | Driver Power UK 2025.
-      </p>
     </div>
   );
 }
