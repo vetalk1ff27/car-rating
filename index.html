@@ -32,7 +32,7 @@
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const { useState } = React;
+const { useState, useEffect } = React;
 
 const brandLogo = {
   "Toyota":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAANlBMVEXWGCD////VExvUCBHVDRbTAwv3zc/++fnytbjfRUzjYGXslJfaLTX64uLqh4vvpqn87/Dmb3RvNCPTAAABlUlEQVRIie1U25bDIAgUEI3XmP//2R1M2tOTpLvb9/LQQyzDAA4697Wv/dv4af+L9l5EVPHj/V8YRIvLJbRIFFso2cmvGCTfGhGFdSFa1gC3baB5Gy4b0ehVlY2BVWsfRJvcQ9g7pMyKynVFbloV3WgGobtDsK9ImxQ1syeqiWi6CifWG4R3iCcnFpSoqBZKhhCH44i/zwQSaGkUGBVJBxCB3XwO1BYKcqZAVnKolwp6XqPC4oquC44ySJI/EyCL6mbNUouj9F5GbPNzUwX7iYI1WgVS53xeba1iNUY9A2zedtGS+vIIXnoSu2q7nxtAN1bD6CjWQxm6C4PBcAXEZ5msw+5M13EEWYOXknBG7A+/YYqY82OWnunS9Bxr2Q8NbAyPIJZyHetOkWYE+w5PEvUpCIZ3JcC5SaPuiETDubFnZam30jjEl6f4ZJ/q1JXJ9VZ8h7xDfcq7mLxreCdvQ2gGScisgr1p2KOM8Gisd/ETInnu5QKKdZnbmt/s24EAhF8fAf79ETgwHzwzD8wnD9nXvrbbD4GSDIprFzacAAAAAElFTkSuQmCC",
@@ -55,6 +55,25 @@ const brandLogo = {
   "SEAT / Cupra":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABHUlEQVQ4jbXSPSvGYRQG8J/3l4GSh5IsirBTkrKYTCZhMNlsvoJk8AVkIEZJpFjsDKJkMnoN2eSd4T7qSR4kTv3733Wf67qvc12HP6gaFPwCV4DqQoyiAWvYxiVec4DyUIV29OEMmrGPh/hPoweVWcAKdGMKu7jDAVrzomEQszjGE+pwiM1Q04s2XIT0+lC+8P5CGeaxgU4sBTD7W0FXkC6i/ON8GQxjCzd4DLm7cb6JuxHU5vDIWLz2gskgzWACz3E3ng3I/0CwjB3J7SspkUucR+9ejPdl9eMW6yhBUcx/j4HvwFCMGZyiCY1SOnMo/QmBAB5Ihg1JkbZ81phrha+lxeqQMl+VIv4xARxJ+3EiGXf/re5Pqlgy8v/qDbZ6QzJIDL2pAAAAAElFTkSuQmCC",
   "Citroën":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAeFBMVEX///////3+/////v/+//3++Pjxnpb63dn99fPul4386uj/+Pb///v0uLDlVkbxn5Prh3jhQizhTj76zsvvmYrqcmTjTDnwkornb17voZf87u7skofseGn2xL3sjID50s3wppv65+HlYE/1vLXwqp7zs6n85OTrgXNK8+yCAAAAw0lEQVQYlR2PgXbDIAhFH6ARNWnaba2LdmmaLev//+FwHOB4LgIPkDDBjCGWLIQxGhOxh+uchAxOp3myn+QE3cfz5Y3fPzKECMzir7ehMlLx+B+nn+ewzMNca1Mj5O9f06KqeZl09Qy0EB8y37ZNHvEZCX4tVa+XHc9Va1utJfq0n76rirYksU9N+xDizxZDNmJr6z1sx2gCj8Wvth0llF9xvZRKaIz8it5BnB2JPLw8cBCbYnbk4NzRlZL1sSVhsev/ANa3CdAsiOV+AAAAAElFTkSuQmCC",
   "Subaru":"data:image/png;base64,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"
+};
+
+const themes = {
+  dark:{
+    vars:{"--color-text-primary":"#e8e8e8","--color-text-secondary":"#b0b0b0","--color-text-tertiary":"#737373","--color-background-primary":"#1a1a1e","--color-background-secondary":"#242428","--color-background-card":"#222226","--color-border-secondary":"#3a3a3e","--color-border-tertiary":"#2e2e32"},
+    tier:{gold:{bg:"rgba(239,159,39,0.15)",brd:"#EF9F27",tx:"#F0B64E",lb:"\u041b\u0456\u0434\u0435\u0440\u0438"},silver:{bg:"rgba(133,183,235,0.12)",brd:"#85B7EB",tx:"#8FC4F0",lb:"\u0421\u0438\u043b\u044c\u043d\u0456 \u0433\u0440\u0430\u0432\u0446\u0456"},bronze:{bg:"rgba(180,178,169,0.12)",brd:"#8A8A85",tx:"#A0A09A",lb:"\u0421\u0435\u0440\u0435\u0434\u043d\u044f\u043a\u0438"},low:{bg:"rgba(240,149,149,0.10)",brd:"#C06060",tx:"#E07070",lb:"\u0410\u0443\u0442\u0441\u0430\u0439\u0434\u0435\u0440\u0438"}},
+    metC:["#7B71E0","#34C98E","#E87A50","#5AA0EE","#D49230","#C45878"],
+    barBg:"rgba(255,255,255,0.06)",barOp:0.85,
+    det:[{c:"rgba(123,113,224,0.10)",tc:"#9B93F0"},{c:"rgba(52,201,142,0.10)",tc:"#50D9A0"},{c:"rgba(232,122,80,0.10)",tc:"#F09070"},{c:"rgba(90,160,238,0.10)",tc:"#70B0F5"},{c:"rgba(212,146,48,0.10)",tc:"#E0A840"},{c:"rgba(196,88,120,0.10)",tc:"#E07090"}],
+    logoBg:"rgba(255,255,255,0.08)"
+  },
+  light:{
+    vars:{"--color-text-primary":"#1a1a1a","--color-text-secondary":"#4a4a4a","--color-text-tertiary":"#8a8a8a","--color-background-primary":"#ffffff","--color-background-secondary":"#f5f5f5","--color-background-card":"#ffffff","--color-border-secondary":"#e0e0e0","--color-border-tertiary":"#ebebeb"},
+    tier:{gold:{bg:"#FAEEDA",brd:"#EF9F27",tx:"#633806",lb:"\u041b\u0456\u0434\u0435\u0440\u0438"},silver:{bg:"#E6F1FB",brd:"#85B7EB",tx:"#0C447C",lb:"\u0421\u0438\u043b\u044c\u043d\u0456 \u0433\u0440\u0430\u0432\u0446\u0456"},bronze:{bg:"#F1EFE8",brd:"#B4B2A9",tx:"#444441",lb:"\u0421\u0435\u0440\u0435\u0434\u043d\u044f\u043a\u0438"},low:{bg:"#FCEBEB",brd:"#F09595",tx:"#791F1F",lb:"\u0410\u0443\u0442\u0441\u0430\u0439\u0434\u0435\u0440\u0438"}},
+    metC:["#534AB7","#1D9E75","#D85A30","#378ADD","#BA7517","#993556"],
+    barBg:"rgba(128,128,128,0.1)",barOp:1,
+    det:[{c:"rgba(83,74,183,0.06)",tc:"#3C3489"},{c:"rgba(29,158,117,0.06)",tc:"#0F6E56"},{c:"rgba(216,90,48,0.06)",tc:"#993C1D"},{c:"rgba(55,138,221,0.06)",tc:"#185FA5"},{c:"rgba(186,117,23,0.06)",tc:"#854F0B"},{c:"rgba(153,53,86,0.06)",tc:"#72243E"}],
+    logoBg:"rgba(0,0,0,0.06)"
+  }
 };
 
 const data = [
@@ -300,32 +319,17 @@ const data = [
   }
 ];
 
-const tierCfg = {
-  gold:{bg:"rgba(239,159,39,0.15)",brd:"#EF9F27",tx:"#F0B64E",lb:"Лідери"},
-  silver:{bg:"rgba(133,183,235,0.12)",brd:"#85B7EB",tx:"#8FC4F0",lb:"Сильні гравці"},
-  bronze:{bg:"rgba(180,178,169,0.12)",brd:"#8A8A85",tx:"#A0A09A",lb:"Середняки"},
-  low:{bg:"rgba(240,149,149,0.10)",brd:"#C06060",tx:"#E07070",lb:"Аутсайдери"}
-};
 
-const mets = [
-  {k:"w",lb:"Зведений",c:"var(--color-text-primary)"},
-  {k:"saf",lb:"Безпека",c:"#7B71E0"},
-  {k:"rel",lb:"Надійність",c:"#34C98E"},
-  {k:"com",lb:"Комфорт/Тех",c:"#E87A50"},
-  {k:"liq",lb:"Ліквідність PL",c:"#5AA0EE"},
-  {k:"bod",lb:"Кузов",c:"#D49230"},
-  {k:"sat",lb:"Задоволеність",c:"#C45878"}
-];
 
 function weighted(b){
   return Math.round(b.saf*0.25 + b.rel*0.20 + b.com*0.20 + b.liq*0.18 + b.bod*0.10 + b.sat*0.07);
 }
 
-function Bar({v,c}){
+function Bar({v,c,bg,op}){
   return(
     <div style={{display:"flex",alignItems:"center",gap:4}}>
-      <div style={{flex:1,height:6,background:"rgba(255,255,255,0.06)",borderRadius:3}}>
-        <div style={{width:`${v}%`,height:"100%",background:c,borderRadius:3,opacity:0.85}}/>
+      <div style={{flex:1,height:6,background:bg,borderRadius:3}}>
+        <div style={{width:`${v}%`,height:"100%",background:c,borderRadius:3,opacity:op}}/>
       </div>
       <span style={{fontSize:15,fontWeight:500,minWidth:24,textAlign:"right",color:"var(--color-text-secondary)"}}>{v}</span>
     </div>
@@ -336,6 +340,19 @@ function App(){
   const [open,setOpen]=useState(null);
   const [sort,setSort]=useState("w");
   const [filt,setFilt]=useState("all");
+  const [theme,setTheme]=useState(()=>{try{return localStorage.getItem("carRatingTheme")||"dark"}catch(e){return "dark"}});
+  const T=themes[theme];
+  useEffect(()=>{Object.entries(T.vars).forEach(([k,v])=>document.documentElement.style.setProperty(k,v));try{localStorage.setItem("carRatingTheme",theme)}catch(e){}},[theme]);
+  const tierCfg=T.tier;
+  const mets=[
+    {k:"w",lb:"Зведений",c:"var(--color-text-primary)"},
+    {k:"saf",lb:"Безпека",c:T.metC[0]},
+    {k:"rel",lb:"Надійність",c:T.metC[1]},
+    {k:"com",lb:"Комфорт/Тех",c:T.metC[2]},
+    {k:"liq",lb:"Ліквідність PL",c:T.metC[3]},
+    {k:"bod",lb:"Кузов",c:T.metC[4]},
+    {k:"sat",lb:"Задоволеність",c:T.metC[5]}
+  ];
 
   const items=data.map(b=>({...b,w:weighted(b)}));
   const filtered=filt==="all"?items:items.filter(b=>b.t===filt);
@@ -351,6 +368,9 @@ function App(){
 
   return(
     <div style={{fontFamily:"var(--font-sans)",maxWidth:960,margin:"0 auto"}}>
+      <div style={{display:"flex",justifyContent:"flex-end",marginBottom:8}}>
+        <button onClick={(e)=>{e.stopPropagation();setTheme(theme==="dark"?"light":"dark")}} style={{padding:"6px 14px",fontSize:14,borderRadius:20,cursor:"pointer",background:"var(--color-background-secondary)",color:"var(--color-text-secondary)",border:"1px solid var(--color-border-secondary)",display:"flex",alignItems:"center",gap:6}}>{theme==="dark"?"☀️ Світла":"🌙 Темна"}</button>
+      </div>
       <div style={{background:"var(--color-background-secondary)",borderRadius:8,padding:"10px 14px",marginBottom:10,fontSize:16,lineHeight:1.6}}>
         <div style={{color:"var(--color-text-secondary)"}}><b>Ринок:</b> Польща / Європа &nbsp;|&nbsp; <b>Ваги:</b> Безпека 25% → Надійність 20% = Комфорт 20% → Ліквідність PL 18% → Кузов 10% → Задоволеність 7%</div>
       </div>
@@ -393,7 +413,7 @@ function App(){
               <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                 <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
                   <span style={{fontSize:17,fontWeight:500,minWidth:24,color:"var(--color-text-secondary)"}}>#{rank}</span>
-                  <img src={brandLogo[b.n]} alt="" style={{width:27,height:27,borderRadius:4,objectFit:"contain",background:"rgba(255,255,255,0.08)",padding:2}} onError={e=>{e.target.style.display="none"}}/>
+                  <img src={brandLogo[b.n]} alt="" style={{width:27,height:27,borderRadius:4,objectFit:"contain",background:T.logoBg,padding:2}} onError={e=>{e.target.style.display="none"}}/>
                   <span style={{fontSize:22}}>{b.f}</span>
                   <span style={{fontSize:18,fontWeight:500}}>{b.n}</span>
                   <span style={{fontSize:13,padding:"2px 7px",borderRadius:8,background:t.bg,color:t.tx,fontWeight:500}}>{t.lb}</span>
@@ -405,8 +425,8 @@ function App(){
               </div>
 
               <div style={{display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:"3px 8px",marginTop:8}}>
-                {[{k:"saf",l:"Безпека",c:"#7B71E0"},{k:"rel",l:"Надійн",c:"#34C98E"},{k:"com",l:"Комф/Тех",c:"#E87A50"},{k:"liq",l:"Лікв PL",c:"#5AA0EE"},{k:"bod",l:"Кузов",c:"#D49230"},{k:"sat",l:"Задовол",c:"#C45878"}].map(m=>(
-                  <div key={m.k}><span style={{fontSize:13,color:"var(--color-text-tertiary)"}}>{m.l}</span><Bar v={b[m.k]} c={m.c}/></div>
+                {[{k:"saf",l:"Безпека",c:T.metC[0]},{k:"rel",l:"Надійн",c:T.metC[1]},{k:"com",l:"Комф/Тех",c:T.metC[2]},{k:"liq",l:"Лікв PL",c:T.metC[3]},{k:"bod",l:"Кузов",c:T.metC[4]},{k:"sat",l:"Задовол",c:T.metC[5]}].map(m=>(
+                  <div key={m.k}><span style={{fontSize:13,color:"var(--color-text-tertiary)"}}>{m.l}</span><Bar v={b[m.k]} c={m.c} bg={T.barBg} op={T.barOp}/></div>
                 ))}
               </div>
 
@@ -417,12 +437,12 @@ function App(){
                   </div>
                   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"6px",marginBottom:8}}>
                     {[
-                      {k:"saf",l:`Безпека (${b.saf})`,c:"rgba(123,113,224,0.10)",tc:"#9B93F0"},
-                      {k:"rel",l:`Надійність (${b.rel})`,c:"rgba(52,201,142,0.10)",tc:"#50D9A0"},
-                      {k:"com",l:`Комфорт/Тех (${b.com})`,c:"rgba(232,122,80,0.10)",tc:"#F09070"},
-                      {k:"liq",l:`Ліквідність PL (${b.liq})`,c:"rgba(90,160,238,0.10)",tc:"#70B0F5"},
-                      {k:"bod",l:`Кузов (${b.bod})`,c:"rgba(212,146,48,0.10)",tc:"#E0A840"},
-                      {k:"sat",l:`Задоволеність (${b.sat})`,c:"rgba(196,88,120,0.10)",tc:"#E07090"}
+                      {k:"saf",l:`Безпека (${b.saf})`,c:T.det[0].c,tc:T.det[0].tc},
+                      {k:"rel",l:`Надійність (${b.rel})`,c:T.det[1].c,tc:T.det[1].tc},
+                      {k:"com",l:`Комфорт/Тех (${b.com})`,c:T.det[2].c,tc:T.det[2].tc},
+                      {k:"liq",l:`Ліквідність PL (${b.liq})`,c:T.det[3].c,tc:T.det[3].tc},
+                      {k:"bod",l:`Кузов (${b.bod})`,c:T.det[4].c,tc:T.det[4].tc},
+                      {k:"sat",l:`Задоволеність (${b.sat})`,c:T.det[5].c,tc:T.det[5].tc}
                     ].map(s=>(
                       <div key={s.k} style={{background:s.c,borderRadius:6,padding:"6px 8px"}}>
                         <div style={{fontSize:13,color:s.tc,fontWeight:500,marginBottom:2}}>{s.l}</div>
