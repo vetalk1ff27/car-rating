@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Rating — Poland/Europe</title>
+<style>
+  :root {
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --color-text-primary: #1a1a1a;
+    --color-text-secondary: #4a4a4a;
+    --color-text-tertiary: #8a8a8a;
+    --color-background-primary: #ffffff;
+    --color-background-secondary: #f5f5f5;
+    --color-border-secondary: #e0e0e0;
+    --color-border-tertiary: #ebebeb;
+    --border-radius-lg: 10px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-background-primary);
+    color: var(--color-text-primary);
+    padding: 20px;
+  }
+</style>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+const data = [
+  {
+    n:"Toyota",f:"\u{1F1EF}\u{1F1F5}",rel:92,liq:97,bod:85,saf:88,com:78,sat:85,
+    plRank:"#1 (92 123 шт., 15.4%)",
+    d:{
+      rel:"CR: №1 надійність (66/100). JD Power: PP100 185. Camry, Corolla, RAV4 — еталони. Гібриди — на 20% менше поломок.",
+      liq:"№1 у Польщі — 15.4% ринку! Corolla — бестселер (23 468 шт.). RAV4, Yaris Cross, C-HR — топ-5 моделей. Найвища ліквідність на OTOMOTO.",
+      bod:"Гарантія: 5 років + 7 років гібриди з перевірками. Якісна оцинковка. Camry — еталон.",
+      saf:"IIHS: Camry, bZ4X, Tundra — TSP+. Safety Sense 3.0 у стандарті. Euro NCAP: C-HR — 5 зірок.",
+      com:"Надійне, тихе, комфортне. Інфотейнмент покращений з 2025, але не лідер технологій.",
+      sat:"Висока — безпроблемне володіння. 5 моделей у топ-10 Польщі."
+    },t:"gold"
+  },
+  {
+    n:"Lexus",f:"\u{1F1EF}\u{1F1F5}",rel:95,liq:80,bod:90,saf:86,com:88,sat:87,
+    plRank:"~19-те (менша мережа, преміум-ніша)",
+    d:{
+      rel:"JD Power: PP100 151 — НАЙКРАЩИЙ серед усіх. CR: №3 (60/100). 4-й рік лідер VDS.",
+      liq:"В Польщі: менша мережа ніж Toyota, але сильний попит на вторинці. NX, RX популярні. 5р: 48–55%.",
+      bod:"Преміальний захист: алюміній + високоміцна сталь. RX — еталон.",
+      saf:"IIHS: NX — TSP+. Lexus Safety System+ 3.0 у стандарті.",
+      com:"Розкішний інтер'єр, тиха кабіна, плавний хід. Преміум-якість матеріалів.",
+      sat:"Висока лояльність. Один із лідерів CR за задоволеністю."
+    },t:"gold"
+  },
+  {
+    n:"Škoda",f:"\u{1F1E8}\u{1F1FF}",rel:58,liq:90,bod:84,saf:86,com:80,sat:78,
+    plRank:"#2 (65 508 шт., 10.97%)",
+    d:{
+      rel:"What Car?: 16-те з 30. Механіка TSI/TDI надійна. DSG потребує уваги. Інфотейнмент глючить.",
+      liq:"№2 у Польщі! Octavia — 2-й бестселер (21 120 шт.). Kodiaq — топ сімейний SUV. Величезна мережа дилерів/сервісів.",
+      bod:"VW Group: 12 років антикорозії. Повна оцинковка. Kodiaq — стійкий.",
+      saf:"Euro NCAP 2024: Superb — Best in Class. Kodiaq, Octavia — 5 зірок.",
+      com:"Рекордні багажники (Kodiaq 835 л). Simply Clever. Інфотейнмент = VW (глючить).",
+      sat:"Дуже популярна в Польщі. «Найпольськіший» сімейний SUV."
+    },t:"silver"
+  },
+  {
+    n:"Mazda",f:"\u{1F1EF}\u{1F1F5}",rel:72,liq:62,bod:82,saf:97,com:85,sat:78,
+    plRank:"~15-те (менша мережа в Польщі)",
+    d:{
+      rel:"CR: 14-те (43/100) — CX-5 редизайн. IQS 2025: PP100 161. CX-70/90 PHEV проблемні.",
+      liq:"У Польщі: менша мережа ніж Toyota/Škoda. CX-5 популярний, але менший вторинний ринок. 5р: 42–48%.",
+      bod:"SKYACTIV-Body: якісна оцинковка. Гарантія перфорації: 5 років.",
+      saf:"IIHS: 8 TSP+ — АБСОЛЮТНИЙ РЕКОРД! Euro NCAP 2025: CX-5 — 93% пішоходи. CX-80 Best in Class 2024.",
+      com:"Преміальний інтер'єр за масову ціну. Тиха кабіна, якісні матеріали.",
+      sat:"CX-5 власники задоволені. CX-70/90 знизили загальний показник."
+    },t:"gold"
+  },
+  {
+    n:"Honda",f:"\u{1F1EF}\u{1F1F5}",rel:82,liq:55,bod:80,saf:85,com:82,sat:83,
+    plRank:"~20-те (мала мережа, обмежений вибір в Європі)",
+    d:{
+      rel:"CR: 4-те (59/100). CR-V Hybrid — високі оцінки. Загалом стабільна надійність.",
+      liq:"В Польщі: обмежена мережа, менший вибір моделей ніж у США. Civic, CR-V, HR-V. Ліквідність нижча. 5р: 40–48%.",
+      bod:"Хороша якість сталі. CR-V — стійкий. Гарантія: 5 років.",
+      saf:"IIHS: Civic, HR-V, Accord — TSP+. Honda Sensing у стандарті. Euro NCAP: 5 зірок.",
+      com:"CR Overall: №4. Практичні, інтуїтивне керування. Але менший вибір в Європі.",
+      sat:"Висока серед власників. Але в Польщі — нішевий бренд."
+    },t:"silver"
+  },
+  {
+    n:"BMW",f:"\u{1F1E9}\u{1F1EA}",rel:70,liq:82,bod:88,saf:88,com:92,sat:92,
+    plRank:"#4 (31 298 шт., 5.24%, +15.4%)",
+    d:{
+      rel:"CR: 5-те (58/100). Усі моделі — середня або краща. Найнадійніший з Європи.",
+      liq:"№4 у Польщі, №1 серед преміуму! +15.4% зростання. Сильний попит на вторинці. 5р: 42–50%.",
+      bod:"Повна оцинковка. Алюміній. 12 років антикорозії. E60, F30 — еталони.",
+      saf:"IIHS: X3, X5 — TSP+. Euro NCAP: iX, i4, X1 — 5 зірок.",
+      com:"CR: №2 загалом (82/100). Найвищий road-test. Технологічний лідер. iDrive — еталон.",
+      sat:"CR: №2 задоволеність. 3-й рік поспіль. Поляки обожнюють BMW."
+    },t:"gold"
+  },
+  {
+    n:"Hyundai",f:"\u{1F1F0}\u{1F1F7}",rel:68,liq:75,bod:80,saf:92,com:88,sat:80,
+    plRank:"#8 (29 226 шт., 4.89%)",
+    d:{
+      rel:"CR: 12-те (48/100). JD Power: PP100 222. Elantra Hybrid надійний. ICCU в EV — проблема.",
+      liq:"№8 у Польщі. Tucson — топ серед індивідуальних покупців. Широка мережа. 5р: 42–48%.",
+      bod:"Гарантія: 7 років без обмежень — одна з найкращих. Сучасна оцинковка.",
+      saf:"IIHS: 7 моделей TSP+. Euro NCAP: Tucson, Ioniq 5, Santa Fe — 5 зірок.",
+      com:"Найбагатше оснащення в класі. 12.3\" екрани, вентиляція, HDA 2. Дуже технологічний.",
+      sat:"Tucson — бестселер серед індивідуальних покупців у Польщі."
+    },t:"silver"
+  },
+  {
+    n:"Kia",f:"\u{1F1F0}\u{1F1F7}",rel:65,liq:78,bod:74,saf:90,com:86,sat:78,
+    plRank:"#5 (30 740 шт., 5.15%)",
+    d:{
+      rel:"CR: 10-те (49/100). Sportage 2026: 84/100 JD Power. RepairPal: 4.0/5.0, 3-тє з 32.",
+      liq:"№5 у Польщі. Sportage — №1 серед індивідуальних (7 649 шт.). 7-річна гарантія підтримує вартість. 5р: 42–48%.",
+      bod:"Гарантія: 5 років/100 тис. Оцинковка сучасна.",
+      saf:"IIHS: Sportage, Sorento, Telluride, K4 — TSP+. Euro NCAP: 5 зірок.",
+      com:"Великі екрани, HDA 2. 7-річна гарантія (Польща). Конкурентне оснащення.",
+      sat:"Sportage — №1 серед приватних покупців у Польщі!"
+    },t:"silver"
+  },
+  {
+    n:"Volkswagen",f:"\u{1F1E9}\u{1F1EA}",rel:35,liq:80,bod:85,saf:84,com:75,sat:65,
+    plRank:"#3 (42 929 шт., 7.19%, +11.8%)",
+    d:{
+      rel:"CR: 16-те (42/100). JD Power: PP100 301 — останнє місце. Taos, Jetta — найгірші.",
+      liq:"№3 у Польщі! T-Roc — №2 серед індивідуальних. Величезна мережа. Легко продати. 5р: 35–42%.",
+      bod:"12 РОКІВ антикорозії. Повна оцинковка. Golf, Passat — стійкі. КУЗОВ — СИЛЬНА СТОРОНА.",
+      saf:"Euro NCAP: Passat — Best in Class 2024. Atlas — TSP+. T-Roc 2025 — 5 зірок. Але Tiguan — без TSP.",
+      com:"Добра якість їзди. Інфотейнмент ГЛЮЧИТЬ — ахіллесова п'ята. Сенсорні кнопки — крок назад.",
+      sat:"Нижче середнього. Скарги на софт. Але T-Roc дуже популярний."
+    },t:"bronze"
+  },
+  {
+    n:"Mercedes-Benz",f:"\u{1F1E9}\u{1F1EA}",rel:42,liq:75,bod:93,saf:96,com:93,sat:75,
+    plRank:"#7 (30 272 шт., 5.07%)",
+    d:{
+      rel:"CR: 19-те (41/100). JD Power: PP100 ~235. Електроніка — проблема.",
+      liq:"№7 у Польщі. Сильний преміум-попит. GLC, C-Class — ліквідні. G-Class — рекордний. 5р: 38–50%.",
+      bod:"ЕТАЛОН: алюміній + високоміцна сталь. W221 — легенда. 12 років гарантія.",
+      saf:"Euro NCAP: E-Class №1 (2024), CLA №1 (2025). IIHS: C-Class, GLC, GLE — TSP+. АБСОЛЮТНИЙ ЛІДЕР БЕЗПЕКИ.",
+      com:"MBUX — найкращий інфотейнмент. Розкіш. Driver Power: №2. Найвищий комфорт серед усіх.",
+      sat:"Піднявся на 9 позицій у CR. Задоволені комфортом, не надійністю."
+    },t:"silver"
+  },
+  {
+    n:"Audi",f:"\u{1F1E9}\u{1F1EA}",rel:48,liq:78,bod:92,saf:92,com:90,sat:73,
+    plRank:"#6 (30 626 шт., 5.13%)",
+    d:{
+      rel:"CR: 13-те (44/100). JD Power: PP100 ~244. Q4 e-Tron — падіння.",
+      liq:"№6 у Польщі. Дуже сильний преміум-попит. Q5, A4 — ліквідні. Велика мережа. 5р: 38–45%.",
+      bod:"ЕТАЛОН: оцинковка + алюміній. Space Frame. A6 — десятиліттями без корозії. 12 років гарантія.",
+      saf:"IIHS: ~7 моделей TSP+! Q5, Q6, A5, Q7, A6 e-Tron — усі. Euro NCAP: Q6 — 5 зірок.",
+      com:"Інтер'єр — один із найкращих. Virtual Cockpit. MMI. Quattro.",
+      sat:"Середня. Задоволені якістю, не вартістю обслуговування."
+    },t:"silver"
+  },
+  {
+    n:"Volvo",f:"\u{1F1F8}\u{1F1EA}",rel:40,liq:62,bod:90,saf:93,com:85,sat:72,
+    plRank:"Преміум, зростає (XC60, XC90 популярні)",
+    d:{
+      rel:"CR: 15-те (42/100). JD Power: PP100 296. XC60 PHEV — проблемний.",
+      liq:"В Польщі: преміум-сегмент росте. XC60 — один із найпопулярніших у класі. 5р: 35–42%.",
+      bod:"Шведська якість: оцинковка + заводський антикор. S80 — еталон. 12 років гарантія.",
+      saf:"IIHS: EX90, XC90 — TSP+. Euro NCAP: EX90 — 92%. EX30 — лідер 2024. Легенда безпеки.",
+      com:"Скандинавський дизайн. Google-інфотейнмент. Harman Kardon. Дуже комфортний.",
+      sat:"Люблять дизайн, скаржаться на надійність та вартість."
+    },t:"bronze"
+  },
+  {
+    n:"Renault",f:"\u{1F1EB}\u{1F1F7}",rel:43,liq:68,bod:63,saf:78,com:76,sat:68,
+    plRank:"#10 (22 200 шт., 3.72%)",
+    d:{
+      rel:"Driver Power: слабка надійність. What Car?: нижня частина. Але покращується.",
+      liq:"№10 у Польщі. Clio, Captur, Arkana — продаються. Dacia (група Renault) — №9. Мережа широка. 5р: 30–38%.",
+      bod:"Старші скарги на пороги. Сучасні краще. 6 років гарантія перфорації.",
+      saf:"Euro NCAP: Austral, Megane E-Tech — 5 зірок. Clio 2025 — тестується.",
+      com:"Google-інфотейнмент (Driver Power №3). Низькі витрати (Driver Power №2).",
+      sat:"Найкращий із французів. Але надійність тягне вниз."
+    },t:"low"
+  },
+  {
+    n:"Nissan",f:"\u{1F1EF}\u{1F1F5}",rel:72,liq:48,bod:70,saf:82,com:72,sat:68,
+    plRank:"~18-те (обмежена лінійка в Європі)",
+    d:{
+      rel:"CR: 6-те (57/100). IQS: PP100 169. Murano — лідер VDS 2026.",
+      liq:"В Польщі: значно менша присутність ніж у США. Qashqai — основна модель. Мала мережа. 5р: 35–40%.",
+      bod:"Неоднозначно. Гарантія: 5 років перфорація.",
+      saf:"IIHS: Murano, Pathfinder — TSP+. Rogue — TSP. Ariya — 5 зірок Euro NCAP.",
+      com:"Qashqai e-Power — цікавий. Але загалом простіший за конкурентів.",
+      sat:"Нижче середнього в Європі."
+    },t:"bronze"
+  },
+  {
+    n:"Tesla",f:"\u{1F1FA}\u{1F1F8}",rel:55,liq:52,bod:55,saf:90,com:88,sat:90,
+    plRank:"Зростає, але нішевий (~2-3% ринку)",
+    d:{
+      rel:"CR: 9-те (50/100). Model Y — найнадійніший EV SUV. Cybertruck — не продається в Європі.",
+      liq:"В Польщі: зростає, але менша мережа сервісів. Суперчарджери є. Model Y — основна модель. 5р: 35–42%.",
+      bod:"12 років антикорозії. Але: зазори, тонкий лак, скарги на іржу Model 3.",
+      saf:"IIHS: Model Y — TSP+. Euro NCAP 2025: Model Y — 92% Safety Assist.",
+      com:"Autopilot, OTA, мінімалізм. Найкращий софт. Суперчарджери.",
+      sat:"Дуже висока задоволеність серед власників."
+    },t:"bronze"
+  },
+  {
+    n:"Ford",f:"\u{1F1FA}\u{1F1F8}",rel:50,liq:55,bod:70,saf:80,com:72,sat:72,
+    plRank:"~12-те (обмежена лінійка: Puma, Kuga, Transit)",
+    d:{
+      rel:"CR: 11-те (48/100). Покращився. Але 110 відкликань у 2025.",
+      liq:"В Польщі/Європі: Puma, Kuga — продаються. Немає F-150, Bronco. Мережа є. 5р: 32–40%.",
+      bod:"Гарантія: 5 років. Стандартна якість.",
+      saf:"IIHS: Explorer — TSP+. Mach-E — TSP+. Euro NCAP: Puma — 5 зірок.",
+      com:"В Європі: лінійка обмежена. Sync — середній. Менше моделей ніж у США.",
+      sat:"Puma популярна. Але менший вибір = менше задоволених."
+    },t:"low"
+  },
+  {
+    n:"Peugeot",f:"\u{1F1EB}\u{1F1F7}",rel:45,liq:52,bod:65,saf:80,com:76,sat:70,
+    plRank:"~13-те (присутній, Stellantis мережа)",
+    d:{
+      rel:"What Car?: середина. Електроніка — скарги. Покращується поступово.",
+      liq:"В Польщі: є мережа Stellantis. 3008, 208 продаються. Але ліквідність нижча за азіатів. 5р: 30–38%.",
+      bod:"Stellantis оцинковка. Старші 407 — скарги. Сучасні краще. 8 років EV гарантія.",
+      saf:"Euro NCAP: 3008 2024 — 5 зірок. 208 — 4 зірки (старий протокол).",
+      com:"i-Cockpit — оригінальне рішення. Гарний дизайн. Driver Power: 4-те за кермування.",
+      sat:"Стиль подобається. Ціна/якість — 25-те (Driver Power)."
+    },t:"low"
+  },
+  {
+    n:"SEAT / Cupra",f:"\u{1F1EA}\u{1F1F8}",rel:48,liq:48,bod:84,saf:84,com:78,sat:72,
+    plRank:"~16-те (нішевий, Cupra росте)",
+    d:{
+      rel:"What Car?: ~20-те з 30. Leon Mk3 — 96.9%. Платформа VW — механіка надійна.",
+      liq:"В Польщі: невелика мережа. Cupra Formentor набирає популярність. Але менш ліквідний. 5р: 28–35%.",
+      bod:"VW Group: 12 років антикорозії. Повна оцинковка.",
+      saf:"Euro NCAP: Cupra Tavascan — 5 зірок. Leon, Formentor — 5 зірок.",
+      com:"Спортивна ДНК. Cupra — яскравий дизайн. Інфотейнмент = VW.",
+      sat:"Нішевий. Cupra власники задоволені стилем."
+    },t:"low"
+  },
+  {
+    n:"Citroën",f:"\u{1F1EB}\u{1F1F7}",rel:40,liq:42,bod:60,saf:72,com:72,sat:62,
+    plRank:"~17-те (присутній, але малий)",
+    d:{
+      rel:"What Car?: нижня частина. C5 — 86.9%. Електроніка — часті проблеми.",
+      liq:"В Польщі: є мережа, але попит низький. C3, Berlingo — основні. 5р: 25–33%.",
+      bod:"Stellantis оцинковка. Старші C4, C5 — скарги.",
+      saf:"Euro NCAP: C4 — 4 зірки. Один із найслабших.",
+      com:"Комфорт підвіски — фірмовий. Але технології мінімальні.",
+      sat:"Найнижча серед представлених."
+    },t:"low"
+  },
+  {
+    n:"Subaru",f:"\u{1F1EF}\u{1F1F5}",rel:88,liq:35,bod:76,saf:93,com:78,sat:82,
+    plRank:"~30-те (мінімальна присутність у Польщі)",
+    d:{
+      rel:"CR: №2 надійність (63/100). Forester, Impreza — вище середнього. EyeSight стабільний.",
+      liq:"В Польщі: МІНІМАЛЬНА мережа (лічені дилери). Запчастини дорожчі, довше чекати. Перепродати складно. 5р: 30–40%.",
+      bod:"5–7 років антикорозії. Старші — тонкий лак. Не на рівні VW Group.",
+      saf:"IIHS: Forester, Solterra — TSP+. EyeSight у стандарті. Дуже безпечні.",
+      com:"AWD у стандарті. Практичні. Але обмежений вибір + мала мережа в Польщі.",
+      sat:"CR: №1 загалом у США. Але в Польщі — ніша, важко обслуговувати."
+    },t:"bronze"
+  }
+];
+
+const tierCfg = {
+  gold:{bg:"#FAEEDA",brd:"#EF9F27",tx:"#633806",lb:"Лідери"},
+  silver:{bg:"#E6F1FB",brd:"#85B7EB",tx:"#0C447C",lb:"Сильні гравці"},
+  bronze:{bg:"#F1EFE8",brd:"#B4B2A9",tx:"#444441",lb:"Середняки"},
+  low:{bg:"#FCEBEB",brd:"#F09595",tx:"#791F1F",lb:"Аутсайдери"}
+};
+
+const mets = [
+  {k:"w",lb:"Зведений",c:"var(--color-text-primary)"},
+  {k:"saf",lb:"Безпека",c:"#534AB7"},
+  {k:"rel",lb:"Надійність",c:"#1D9E75"},
+  {k:"com",lb:"Комфорт/Тех",c:"#D85A30"},
+  {k:"liq",lb:"Ліквідність PL",c:"#378ADD"},
+  {k:"bod",lb:"Кузов",c:"#BA7517"},
+  {k:"sat",lb:"Задоволеність",c:"#993556"}
+];
+
+function weighted(b){
+  return Math.round(b.saf*0.25 + b.rel*0.20 + b.com*0.20 + b.liq*0.18 + b.bod*0.10 + b.sat*0.07);
+}
+
+function Bar({v,c}){
+  return(
+    <div style={{display:"flex",alignItems:"center",gap:4}}>
+      <div style={{flex:1,height:6,background:"rgba(128,128,128,0.1)",borderRadius:3}}>
+        <div style={{width:`${v}%`,height:"100%",background:c,borderRadius:3}}/>
+      </div>
+      <span style={{fontSize:11,fontWeight:500,minWidth:22,textAlign:"right"}}>{v}</span>
+    </div>
+  );
+}
+
+function App(){
+  const [open,setOpen]=useState(null);
+  const [sort,setSort]=useState("w");
+  const [filt,setFilt]=useState("all");
+
+  const items=data.map(b=>({...b,w:weighted(b)}));
+  const filtered=filt==="all"?items:items.filter(b=>b.t===filt);
+  const sorted=[...filtered].sort((a,b)=>{
+    const ka=sort==="w"?a.w:a[sort];
+    const kb=sort==="w"?b.w:b[sort];
+    return kb-ka;
+  });
+  const allSorted=[...items].sort((a,b)=>(sort==="w"?b.w-a.w:b[sort]-a[sort]));
+
+  const tc={gold:0,silver:0,bronze:0,low:0};
+  data.forEach(b=>tc[b.t]++);
+
+  return(
+    <div style={{fontFamily:"var(--font-sans)",maxWidth:720,margin:"0 auto"}}>
+      <div style={{background:"var(--color-background-secondary)",borderRadius:8,padding:"10px 14px",marginBottom:10,fontSize:12,lineHeight:1.6}}>
+        <div style={{color:"var(--color-text-secondary)"}}><b>Ринок:</b> Польща / Європа &nbsp;|&nbsp; <b>Ваги:</b> Безпека 25% → Надійність 20% = Комфорт 20% → Ліквідність PL 18% → Кузов 10% → Задоволеність 7%</div>
+      </div>
+
+      <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:8}}>
+        {[{k:"all",l:"Усі"},{k:"gold",l:"Лідери"},{k:"silver",l:"Сильні"},{k:"bronze",l:"Середн."},{k:"low",l:"Аутсайд."}].map(f=>(
+          <button key={f.k} onClick={()=>setFilt(f.k)} style={{
+            padding:"3px 9px",fontSize:11,borderRadius:14,cursor:"pointer",
+            background:filt===f.k?"var(--color-text-primary)":"transparent",
+            color:filt===f.k?"var(--color-background-primary)":"var(--color-text-secondary)",
+            border:`1px solid ${filt===f.k?"var(--color-text-primary)":"var(--color-border-secondary)"}`
+          }}>{f.l} {f.k==="all"?data.length:tc[f.k]||0}</button>
+        ))}
+      </div>
+      <div style={{display:"flex",flexWrap:"wrap",gap:4,marginBottom:12}}>
+        <span style={{fontSize:10,color:"var(--color-text-tertiary)",lineHeight:"22px"}}>Сорт:</span>
+        {mets.map(m=>(
+          <button key={m.k} onClick={()=>setSort(m.k)} style={{
+            padding:"2px 7px",fontSize:10,borderRadius:5,cursor:"pointer",
+            background:sort===m.k?"var(--color-background-secondary)":"transparent",
+            color:sort===m.k?m.c:"var(--color-text-tertiary)",fontWeight:sort===m.k?500:400,
+            border:`0.5px solid ${sort===m.k?"var(--color-border-secondary)":"transparent"}`
+          }}>{m.lb}</button>
+        ))}
+      </div>
+
+      <div style={{display:"flex",flexDirection:"column",gap:8}}>
+        {sorted.map((b,i)=>{
+          const t=tierCfg[b.t];
+          const isOpen=open===b.n;
+          const rank=allSorted.findIndex(x=>x.n===b.n)+1;
+          return(
+            <div key={b.n} onClick={()=>setOpen(isOpen?null:b.n)} style={{
+              background:"var(--color-background-primary)",
+              border:"0.5px solid var(--color-border-tertiary)",
+              borderLeft:`4px solid ${t.brd}`,
+              borderRadius:"0 10px 10px 0",
+              padding:"10px 13px",cursor:"pointer"
+            }}>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+                  <span style={{fontSize:13,fontWeight:500,minWidth:22,color:"var(--color-text-secondary)"}}>#{rank}</span>
+                  <span style={{fontSize:16}}>{b.f}</span>
+                  <span style={{fontSize:14,fontWeight:500}}>{b.n}</span>
+                  <span style={{fontSize:9,padding:"1px 6px",borderRadius:8,background:t.bg,color:t.tx,fontWeight:500}}>{t.lb}</span>
+                </div>
+                <div style={{display:"flex",alignItems:"center",gap:6}}>
+                  <span style={{fontSize:17,fontWeight:500}}>{sort==="w"?b.w:b[sort]}</span>
+                  <span style={{fontSize:9,color:"var(--color-text-tertiary)",transform:isOpen?"rotate(180deg)":"",transition:"transform 0.2s",display:"inline-block"}}>▼</span>
+                </div>
+              </div>
+
+              <div style={{display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:"2px 6px",marginTop:7}}>
+                {[{k:"saf",l:"Безпека",c:"#534AB7"},{k:"rel",l:"Надійн",c:"#1D9E75"},{k:"com",l:"Комф/Тех",c:"#D85A30"},{k:"liq",l:"Лікв PL",c:"#378ADD"},{k:"bod",l:"Кузов",c:"#BA7517"},{k:"sat",l:"Задовол",c:"#993556"}].map(m=>(
+                  <div key={m.k}><span style={{fontSize:8,color:"var(--color-text-tertiary)"}}>{m.l}</span><Bar v={b[m.k]} c={m.c}/></div>
+                ))}
+              </div>
+
+              {isOpen&&(
+                <div style={{marginTop:12,borderTop:"0.5px solid var(--color-border-tertiary)",paddingTop:10,fontSize:12,lineHeight:1.65}}>
+                  <div style={{background:"var(--color-background-secondary)",borderRadius:6,padding:"6px 10px",marginBottom:8,fontSize:11}}>
+                    <span style={{fontWeight:500}}>Польща 2025:</span> {b.plRank}
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"6px",marginBottom:8}}>
+                    {[
+                      {k:"saf",l:`Безпека (${b.saf})`,c:"rgba(83,74,183,0.06)",tc:"#3C3489"},
+                      {k:"rel",l:`Надійність (${b.rel})`,c:"rgba(29,158,117,0.06)",tc:"#0F6E56"},
+                      {k:"com",l:`Комфорт/Тех (${b.com})`,c:"rgba(216,90,48,0.06)",tc:"#993C1D"},
+                      {k:"liq",l:`Ліквідність PL (${b.liq})`,c:"rgba(55,138,221,0.06)",tc:"#185FA5"},
+                      {k:"bod",l:`Кузов (${b.bod})`,c:"rgba(186,117,23,0.06)",tc:"#854F0B"},
+                      {k:"sat",l:`Задоволеність (${b.sat})`,c:"rgba(153,53,86,0.06)",tc:"#72243E"}
+                    ].map(s=>(
+                      <div key={s.k} style={{background:s.c,borderRadius:6,padding:"6px 8px"}}>
+                        <div style={{fontSize:9,color:s.tc,fontWeight:500,marginBottom:2}}>{s.l}</div>
+                        <div style={{fontSize:11,color:"var(--color-text-secondary)"}}>{b.d[s.k]}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <p style={{fontSize:9,color:"var(--color-text-tertiary)",marginTop:12,lineHeight:1.5}}>
+        Адаптовано під Польщу: ліквідність = реєстрації SAMAR 2025 + мережа дилерів + попит на OTOMOTO. Buick прибрано (немає в Європі). Ford — лише європейська лінійка.
+        Джерела: CR 2026 | JD Power VDS 2026 & IQS 2025 | KBB & CarEdge 2026 | Euro NCAP 2024–2025 | IIHS 2025 | What Car? UK 2025 | SAMAR.pl 2025 | Driver Power UK 2025.
+      </p>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
